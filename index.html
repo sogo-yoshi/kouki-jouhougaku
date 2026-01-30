@@ -1,1 +1,198 @@
-課題用ファイル
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画像アニメーションデモ</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* CSSで画像の大きさをコントロール */
+    #animatedImage {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 5px solid white;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+      margin: 20px 0;
+    }
+
+    #animatedImage:hover {
+      transform: scale(1.1);
+    }
+
+    .controls {
+      margin-top: 30px;
+    }
+
+    button {
+      background: white;
+      color: #667eea;
+      border: none;
+      padding: 12px 30px;
+      margin: 5px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    #timer {
+      font-size: 1.5em;
+      margin: 20px 0;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    #status {
+      margin-top: 15px;
+      font-size: 1.1em;
+      min-height: 30px;
+    }
+
+    /* アニメーションクラス */
+    .pulse {
+      animation: pulse 1s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.2);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🖼️ 画像タイマーアニメーション</h1>
+    
+    <!-- getElementByIdで操作する画像 -->
+    <img id="animatedImage" 
+         src="https://picsum.photos/400/400?random=1" 
+         alt="ランダム画像">
+    
+    <!-- タイマー表示 -->
+    <div id="timer">タイマー: 0秒</div>
+    
+    <div id="status">ボタンをクリックしてください</div>
+    
+    <div class="controls">
+      <button id="startBtn">スタート</button>
+      <button id="stopBtn">ストップ</button>
+      <button id="resetBtn">リセット</button>
+      <button id="changeImageBtn">画像変更</button>
+    </div>
+  </div>
+
+  <script>
+    // getElementByIdを使用して要素を取得
+    const image = document.getElementById('animatedImage');
+    const timerDisplay = document.getElementById('timer');
+    const statusDisplay = document.getElementById('status');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const changeImageBtn = document.getElementById('changeImageBtn');
+
+    // タイマー関連の変数
+    let seconds = 0;
+    let timerInterval = null;
+    let imageCounter = 1;
+
+    // タイマーを開始する関数
+    function startTimer() {
+      if (timerInterval === null) {
+        timerInterval = setInterval(() => {
+          seconds++;
+          timerDisplay.textContent = `タイマー: ${seconds}秒`;
+          
+          // 3秒ごとに画像にアニメーションを追加
+          if (seconds % 3 === 0) {
+            image.classList.add('pulse');
+            setTimeout(() => {
+              image.classList.remove('pulse');
+            }, 1000);
+          }
+        }, 1000);
+        
+        statusDisplay.textContent = '⏰ タイマー実行中...';
+      }
+    }
+
+    // タイマーを停止する関数
+    function stopTimer() {
+      if (timerInterval !== null) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        statusDisplay.textContent = '⏸️ タイマー停止中';
+      }
+    }
+
+    // タイマーをリセットする関数
+    function resetTimer() {
+      stopTimer();
+      seconds = 0;
+      timerDisplay.textContent = `タイマー: ${seconds}秒`;
+      statusDisplay.textContent = '🔄 リセットしました';
+    }
+
+    // 画像を変更する関数
+    function changeImage() {
+      imageCounter++;
+      image.src = `https://picsum.photos/400/400?random=${imageCounter}`;
+      statusDisplay.textContent = '🖼️ 画像を変更しました';
+    }
+
+    // イベントリスナーを設定
+    startBtn.addEventListener('click', startTimer);
+    stopBtn.addEventListener('click', stopTimer);
+    resetBtn.addEventListener('click', resetTimer);
+    changeImageBtn.addEventListener('click', changeImage);
+
+    // 画像の読み込み完了時の処理
+    image.addEventListener('load', () => {
+      console.log('画像が読み込まれました');
+    });
+  </script>
+</body>
+</html>
