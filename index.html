@@ -2,46 +2,91 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>タイマーと画像サイズ変更</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画像タイマー</title>
   <style>
-    /* CSSで画像サイズをコントロール */
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background-color: #f0f0f0;
+    }
+
+    /* CSSで画像の大きさをコントロール */
     #myImage {
-      width: 200px;
-      transition: width 0.5s;
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      border: 3px solid #333;
+      margin: 20px 0;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #timer {
+      font-size: 24px;
+      margin: 20px 0;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-
-  <h2>画像サイズが自動で変わります</h2>
-
-  <img id="myImage" src="sample.jpg" alt="サンプル画像">
-
-  <p id="status">待機中...</p>
+  <h1>画像タイマー</h1>
+  
+  <!-- getElementByIdで操作する画像 -->
+  <img id="myImage" src="https://picsum.photos/300/300" alt="画像">
+  
+  <!-- タイマー表示 -->
+  <div id="timer">0秒</div>
+  
+  <button id="startBtn">スタート</button>
+  <button id="stopBtn">ストップ</button>
 
   <script>
-    // getElementById を使用
+    // getElementByIdを使用
     const image = document.getElementById('myImage');
-    const status = document.getElementById('status');
+    const timerDisplay = document.getElementById('timer');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
 
-    let size = 200;
-    let isLarge = false;
+    let seconds = 0;
+    let timerInterval = null;
 
-    // タイマーを使用
-    setInterval(() => {
-      if (isLarge) {
-        size = 200;
-        status.textContent = '画像が小さくなりました';
-      } else {
-        size = 300;
-        status.textContent = '画像が大きくなりました';
+    // タイマー開始
+    startBtn.addEventListener('click', function() {
+      if (timerInterval === null) {
+        timerInterval = setInterval(function() {
+          seconds++;
+          timerDisplay.textContent = seconds + '秒';
+          
+          // 5秒ごとに画像を変更
+          if (seconds % 5 === 0) {
+            image.src = 'https://picsum.photos/300/300?random=' + seconds;
+          }
+        }, 1000);
       }
+    });
 
-      image.style.width = size + 'px';
-      isLarge = !isLarge;
-    }, 2000); // 2秒ごとに実行
+    // タイマー停止
+    stopBtn.addEventListener('click', function() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      seconds = 0;
+      timerDisplay.textContent = '0秒';
+    });
   </script>
-
 </body>
 </html>
